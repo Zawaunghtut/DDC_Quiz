@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DDC Summaries Quiz</title>
+    <style>
+        :root {
+            --primary-color: #1a237e; /* နက်ပြာရင့်ရောင် */
+            --secondary-color: #ff9800; /* လိမ္မော်ရောင် */
+            --accent-color: #4caf50; /* အစိမ်းရောင် */
+            --light-bg: #f5f7ff; /* အပြာဖျော့ရောင် */
+            --text-color: #333333;
+            --highlight-color: #e91e63; /* ပန်းရောင် */
+            --correct-color: #4caf50; /* အစိမ်းရောင် */
+            --wrong-color: #f44336; /* အနီရောင် */
+            --card-bg: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Pyidaungsu', 'Myanmar3', 'Noto Sans Myanmar', sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            color: var(--text-color);
+        }
+
+        .quiz-container {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            max-width: 700px;
+            width: 100%;
+            border: 2px solid var(--secondary-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quiz-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color), var(--accent-color));
+        }
+
+        h2 {
+            color: var(--primary-color);
+            text-align: center;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            border-bottom: 3px dashed var(--secondary-color);
+            font-size: 1.8rem;
+            position: relative;
+        }
+
+        h2::after {
+            content: '📚';
+            position: absolute;
+            right: 20px;
+            top: 0;
+            font-size: 1.5rem;
+        }
+
+        .level-indicator {
+            text-align: center;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 25px;
+            padding: 10px;
+            background-color: rgba(255, 152, 0, 0.1);
+            border-radius: 10px;
+            border-left: 5px solid var(--secondary-color);
+            font-size: 1.1rem;
+        }
+
+        .progress-container {
+            margin-bottom: 25px;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+        }
+
+        .progress-bar {
+            height: 12px;
+            background-color: #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 6px;
+        }
+
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            color: var(--primary-color);
+            line-height: 1.5;
+            padding: 15px;
+            background-color: rgba(26, 35, 126, 0.05);
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        @media (min-width: 600px) {
+            .options {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .option-btn {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background-color: white;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s;
+            font-size: 1rem;
+            color: var(--text-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-btn:hover {
+            background-color: #f5f7ff;
+            border-color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .option-btn:hover::before {
+            left: 100%;
+        }
+
+        .option-btn.correct {
+            background-color: var(--correct-color);
+            color: white;
+            border-color: var(--correct-color);
+        }
+
+        .option-btn.wrong {
+            background-color: var(--wrong-color);
+            color: white;
+            border-color: var(--wrong-color);
+        }
+
+        .result-section {
+            display: none;
+            text-align: center;
+            padding: 30px 20px;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .score-display {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 25px 0;
+            color: var(--primary-color);
+            padding: 20px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, rgba(26, 35, 126, 0.1) 0%, rgba(76, 175, 80, 0.1) 100%);
+            position: relative;
+        }
+
+        .score-display::after {
+            content: '✨';
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 2rem;
+        }
+
+        .performance-message {
+            font-size: 1.3rem;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: rgba(255, 152, 0, 0.1);
+            color: var(--secondary-color);
+            border-left: 5px solid var(--secondary-color);
+        }
+
+        .btn-next, .btn-restart {
+            margin-top: 20px;
+            padding: 15px 30px;
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            display: inline-block;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-next:hover, .btn-restart:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-next:active, .btn-restart:active {
+            transform: translateY(1px);
+        }
+
+        .btn-next {
+            display: none;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .correct-feedback {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--correct-color);
+            border-left: 4px solid var(--correct-color);
+        }
+
+        .incorrect-feedback {
+            background-color: rgba(244, 67, 54, 0.1);
+            color: var(--wrong-color);
+            border-left: 4px solid var(--wrong-color);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .quiz-footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 0.9rem;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            background-color: var(--highlight-color);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h2>DDC ဒဿမ ဒသမ ခွဲခြားမှု စနစ် စစ်ဆေးခြင်း</h2>
+    
+    <div class="progress-container">
+        <div class="progress-text">
+            <span>အဆင့် <span id="current-level">1</span>/3</span>
+            <span>မေးခွန်း <span id="current-question">1</span>/<span id="total-questions">10</span></span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+    </div>
+    
+    <div id="quiz-box">
+        <div class="level-indicator" id="level-text">
+            အဆင့် 1: ပထမ အကျဉ်းချုပ် (အဓိက အတန်းများ)
+        </div>
+        <div class="question" id="question-text">မေးခွန်းဒီမှာပေါ်မည်။</div>
+        <div class="options" id="options-container">
+            <!-- Options will be inserted here by JavaScript -->
+        </div>
+        
+        <div id="feedback" class="feedback"></div>
+        
+        <button class="btn-next" id="next-btn" onclick="nextQuestion()">နောက်တစ်ပုဒ် ➔</button>
+    </div>
+
+    <div class="result-section" id="result-box">
+        <div class="score-display">သင်၏ရမှတ်: <span id="final-score">0</span>/<span id="total-score">10</span></div>
+        
+        <div class="performance-message" id="performance-message"></div>
+        
+        <button class="btn-restart" onclick="resetQuiz()">စာမေးပွဲ ပြန်စမည် 🔄</button>
+        
+        <div class="quiz-footer">
+            DDC ဒဿမ ဒသမ ခွဲခြားမှုစနစ်ကို ကျွမ်းကျင်စွာ အသုံးပြုနိုင်ပါစေ။
+        </div>
+    </div>
+</div>
+
+<script>
+    const quizData = [
+        // Level 1: First Summary (Main Classes)
+        { 
+            q: "DDC ရဲ့ 500 သည် မည်သည့်ဘာသာရပ်ဖြစ်သနည်း။", 
+            a: "Natural Sciences & Mathematics", 
+            options: ["Social Sciences", "Natural Sciences & Mathematics", "Arts", "Technology"], 
+            level: 1,
+            explanation: "500 - သိပ္ပံပညာနှင့် သင်္ချာဘာသာရပ်"
+        },
+        { 
+            q: "000 သည် မည်သည့် Main Class ဖြစ်သနည်း။", 
+            a: "Computer Science, Information & General Works", 
+            options: ["Religion", "Philosophy", "History", "Computer Science, Information & General Works"], 
+            level: 1,
+            explanation: "000 - ကွန်ပျူတာသိပ္ပံ၊ သတင်းအချက်အလက်နှင့် ယေဘုယျလုပ်ငန်းများ"
+        },
+        
+        // Level 2: Second Summary (Divisions)
+        { 
+            q: "နံပါတ် 510 သည် မည်သည့်ဘာသာရပ်ကို ကိုယ်စားပြုသနည်း။", 
+            a: "Mathematics", 
+            options: ["Physics", "Chemistry", "Mathematics", "Astronomy"], 
+            level: 2,
+            explanation: "510 - သင်္ချာဘာသာရပ်"
+        },
+        { 
+            q: "နံပါတ် 020 သည် မည်သည့်ဘာသာရပ်ဖြစ်သနည်း။", 
+            a: "Library & Information Sciences", 
+            options: ["Journalism", "Library & Information Sciences", "Bibliography", "General Statistics"], 
+            level: 2,
+            explanation: "020 - စာကြည့်တိုက်နှင့် သတင်းအချက်အလက်သိပ္ပံ"
+        },
+        { 
+            q: "Social Sciences (300) အောက်ရှိ 310 သည် မည်သည့်ဘာသာရပ်ဖြစ်သနည်း။", 
+            a: "General Statistics", 
+            options: ["Economics", "Law", "Education", "General Statistics"], 
+            level: 2,
+            explanation: "310 - ယေဘုယျစာရင်းအင်းပညာ"
+        },
+        { 
+            q: "Physics (ရုပဗေဒ) အတွက် DDC နံပါတ်မှာ မည်သည်နည်း။", 
+            a: "530", 
+            options: ["510", "520", "530", "540"], 
+            level: 2,
+            explanation: "530 - ရူပဗေဒဘာသာရပ်"
+        },
+        
+        // Level 3: Third Summary (Sections/Detailed)
+        { 
+            q: "နံပါတ် 010 သည် မည်သည့်ဘာသာရပ်ဖြစ်သနည်း။", 
+            a: "Bibliography", 
+            options: ["Library Science", "Bibliography", "Encyclopedias", "Magazines"], 
+            level: 3,
+            explanation: "010 - ကိုယ်တိုင်ရေးမှတ်တမ်း (စာအုပ်စာရင်း)"
+        },
+        { 
+            q: "နံပါတ် 430 သည် မည်သည့်ဘာသာစကားဖြစ်သနည်း။", 
+            a: "German", 
+            options: ["English", "French", "German", "Italian"], 
+            level: 3,
+            explanation: "430 - ဂျာမန်ဘာသာစကား"
+        },
+        { 
+            q: "နံပါတ် 820 သည် မည်သည့်စာပေဖြစ်သနည်း။", 
+            a: "English Literature", 
+            options: ["American Literature", "English Literature", "German Literature", "French Literature"], 
+            level: 3,
+            explanation: "820 - အင်္ဂလိပ်စာပေ"
+        },
+        { 
+            q: "နံပါတ် 950 သည် မည်သည့်ဒေသသမိုင်းကို ကိုယ်စားပြုသနည်း။", 
+            a: "History of Asia", 
+            options: ["History of Europe", "History of Asia", "History of Africa", "History of North America"], 
+            level: 3,
+            explanation: "950 - အာရှသမိုင်း"
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let userAnswers = [];
+
+    const questionEl = document.getElementById('question-text');
+    const optionsEl = document.getElementById('options-container');
+    const levelEl = document.getElementById('level-text');
+    const nextBtn = document.getElementById('next-btn');
+    const quizBox = document.getElementById('quiz-box');
+    const resultBox = document.getElementById('result-box');
+    const finalScoreEl = document.getElementById('final-score');
+    const totalScoreEl = document.getElementById('total-score');
+    const feedbackEl = document.getElementById('feedback');
+    const currentLevelEl = document.getElementById('current-level');
+    const currentQuestionEl = document.getElementById('current-question');
+    const totalQuestionsEl = document.getElementById('total-questions');
+    const progressFillEl = document.getElementById('progress-fill');
+    const performanceMessageEl = document.getElementById('performance-message');
+
+    function loadQuestion() {
+        const data = quizData[currentQuestion];
+        
+        // Update level text with appropriate description
+        let levelDescription = "";
+        switch(data.level) {
+            case 1: levelDescription = "ပထမ အကျဉ်းချုပ် (အဓိက အတန်းများ)"; break;
+            case 2: levelDescription = "ဒုတိယ အကျဉ်းချုပ် (ဌာနခွဲများ)"; break;
+            case 3: levelDescription = "တတိယ အကျဉ်းချုပ် (အသေးစိတ်ခွဲခြားမှု)"; break;
+        }
+        
+        levelEl.innerHTML = `အဆင့် ${data.level}: ${levelDescription} <span class="level-badge">${data.level}/3</span>`;
+        
+        // Update progress indicators
+        currentLevelEl.textContent = data.level;
+        currentQuestionEl.textContent = currentQuestion + 1;
+        totalQuestionsEl.textContent = quizData.length;
+        
+        // Update progress bar
+        const progressPercent = ((currentQuestion) / quizData.length) * 100;
+        progressFillEl.style.width = `${progressPercent}%`;
+        
+        questionEl.textContent = `${currentQuestion + 1}. ${data.q}`;
+        optionsEl.innerHTML = '';
+        nextBtn.style.display = 'none';
+        feedbackEl.style.display = 'none';
+        feedbackEl.textContent = '';
+        feedbackEl.className = 'feedback';
+
+        data.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.textContent = opt;
+            btn.classList.add('option-btn');
+            btn.onclick = () => checkAnswer(btn, opt);
+            optionsEl.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(btn, selected) {
+        const correct = quizData[currentQuestion].a;
+        const explanation = quizData[currentQuestion].explanation;
+        const allBtns = optionsEl.querySelectorAll('.option-btn');
+        
+        // Disable all buttons
+        allBtns.forEach(b => b.style.pointerEvents = 'none');
+        
+        // Store user answer
+        userAnswers[currentQuestion] = {
+            question: quizData[currentQuestion].q,
+            selected: selected,
+            correct: correct,
+            isCorrect: selected === correct
+        };
+
+        if (selected === correct) {
+            btn.classList.add('correct');
+            score++;
+            
+            // Show feedback
+            feedbackEl.textContent = `မှန်ပါတယ်! ${explanation}`;
+            feedbackEl.classList.add('correct-feedback');
+        } else {
+            btn.classList.add('wrong');
+            
+            // Show correct answer
+            allBtns.forEach(b => {
+                if (b.textContent === correct) {
+                    b.classList.add('correct');
+                }
+            });
+            
+            // Show feedback
+            feedbackEl.textContent = `မှားပါတယ်! မှန်ကန်သောအဖြေ - ${correct}. ${explanation}`;
+            feedbackEl.classList.add('incorrect-feedback');
+        }
+        
+        feedbackEl.style.display = 'block';
+        nextBtn.style.display = 'block';
+    }
+
+    function nextQuestion() {
+        currentQuestion++;
+        if (currentQuestion < quizData.length) {
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        // Update progress bar to 100%
+        progressFillEl.style.width = '100%';
+        
+        // Calculate score percentage
+        const percentage = Math.round((score / quizData.length) * 100);
+        
+        // Set performance message based on score
+        let message = "";
+        if (percentage >= 90) {
+            message = "အထူးကောင်းမွန်ပါတယ်! DDC စနစ်ကို အလွန်နားလည်သဘောပေါက်ထားပါတယ်။";
+        } else if (percentage >= 70) {
+            message = "ကောင်းမွန်ပါတယ်! DDC စနစ်ကို ကောင်းစွာနားလည်သဘောပေါက်ထားပါတယ်။";
+        } else if (percentage >= 50) {
+            message = "သင့်တော်ပါတယ်! DDC စနစ်အကြောင်း အခြေခံကို နားလည်ထားပါတယ်။";
+        } else {
+            message = "ကြိုးစားပါ! DDC စနစ်ကို ထပ်မံလေ့လာသင့်ပါတယ်။";
+        }
+        
+        quizBox.style.display = 'none';
+        resultBox.style.display = 'block';
+        finalScoreEl.textContent = score;
+        totalScoreEl.textContent = quizData.length;
+        performanceMessageEl.textContent = message;
+    }
+
+    function resetQuiz() {
+        currentQuestion = 0;
+        score = 0;
+        userAnswers = [];
+        quizBox.style.display = 'block';
+        resultBox.style.display = 'none';
+        loadQuestion();
+    }
+
+    // Initialize the quiz
+    loadQuestion();
+</script>
+
+</body>
+</html>
