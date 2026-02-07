@@ -1,15 +1,14 @@
-Copyright (c) 2026 Zaw Aung Htut (Saya Zaw)
+# DDC Quiz System
 
-[မြန်မာဘာသာဖြင့် အထူးသတ်မှတ်ချက်]
-ဤ Software နှင့် Source Code များအားလုံး၏ မူပိုင်ခွင့်မှာ ဆရာဇော် (Zaw Aung Htut) ထံတွင်သာ ရှိသည်။ 
+စာကြည့်တိုက်ပညာ (Library Science) လေ့လာနေသူများ DDC ခွဲခြားခြင်းစနစ်ကို အလွယ်တကူ လေ့ကျင့်နိုင်ရန် ဖန်တီးထားသော Quiz Tool ဖြစ်ပါသည်။
 
-၁။ ပညာဒါန ရည်ရွယ်ချက်ဖြစ်၍ မည်သူမဆို အခမဲ့ အသုံးပြုနိုင်သော်လည်း၊ မူရင်း Code ကို ကူးယူပြီး အမည်ပြောင်းလဲခြင်း (Re-branding) နှင့် စီးပွားဖြစ် ပြန်လည်ရောင်းချခြင်း (Reselling) ကို လုံးဝ (လုံးဝ) ခွင့်မပြုပါ။
-၂။ ဤ Code ကို အခြေခံ၍ အခြားပရောဂျက်များတွင် အသုံးပြုပါက မူရင်းဖန်တီးသူ "ဆရာဇော် (Zaw Aung Htut)" ၏ အမည်ကို Credit အဖြစ် မပျက်မကွက် ဖော်ပြရမည်။
-၃။ အခမဲ့ ပညာဒါနအဖြစ်သာ ဖြန့်ဝေခွင့်ရှိပြီး၊ မည်သည့် ပုံစံနှင့်မျှ ငွေကြေးကောက်ခံ၍ အသုံးပြုခြင်းကို ခွင့်မပြုပါ။
+### 🌟 Features
+* DDC Classification မေးခွန်းများကို အပြန်အလှန် ဖြေကြားနိုင်ခြင်း။
+* ရမှတ်များကို ချက်ချင်း သိရှိနိုင်ခြင်း။
 
-[English Version - Strict Prohibition]
-1. NO RESELLING OR REBRANDING: This software is provided for free educational purposes. Copying the source code to rebrand it as your own or reselling it for commercial profit is STRICTLY PROHIBITED.
-2. NON-COMMERCIAL USE ONLY: Any commercial distribution or monetized use of this code requires formal written consent from the author.
-3. ATTRIBUTION: Original authorship must be attributed to "Zaw Aung Htut (Saya Zaw)" in all derivative works.
+### 👨‍🏫 Author
+ဆရာဇော် (Zaw Aung Htut)
+*Retired University Teacher | Freelancer*
 
-Author: Zaw Aung Htut (Retired University Teacher / Freelancer)
+### ⚖️ License
+ဤ Program သည် အခမဲ့ ပညာဒါန ဖြစ်သည်။ မူရင်း Code ကို အမည်ပြောင်းလဲခြင်းနှင့် ပြန်လည်ရောင်းချခြင်းကို လုံးဝ (လုံးဝ) ခွင့်မပြုပါ။ အသေးစိတ်ကို [LICENSE](./LICENSE) တွင် ဖတ်ရှုပါ။
